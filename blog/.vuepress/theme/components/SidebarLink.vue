@@ -40,8 +40,8 @@ export default {
       1
     ].find(depth => depth !== undefined)
 
-    const displayAllHeaders = $themeLocaleConfig.displayAllHeaders
-      || $themeConfig.displayAllHeaders
+    const displayAllHeaders = $themeLocaleConfig.displayAllHeaders ||
+      $themeConfig.displayAllHeaders
 
     if (item.type === 'auto') {
       return [link, renderChildren(h, item.children, item.basePath, $route, maxDepth)]
@@ -102,7 +102,7 @@ a.sidebar-link
   font-size 1em
   font-weight 400
   display inline-block
-  color $textColor
+  color $blackLighter
   border-left 0.25rem solid transparent
   padding 0.35rem 1rem 0.35rem 1.25rem
   line-height 1.4
@@ -110,12 +110,11 @@ a.sidebar-link
   box-sizing: border-box
   &:hover
     color $accentColor
+    text-decoration underline
   &.active
     font-weight 600
     color $accentColor
     border-left-color $accentColor
-  .sidebar-group &
-    padding-left 2rem
   .sidebar-sub-headers &
     padding-top 0.25rem
     padding-bottom 0.25rem

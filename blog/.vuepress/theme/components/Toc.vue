@@ -1,5 +1,9 @@
 <template>
-  <Sticker v-if="visible" class="vuepress-toc" v-bind="$attrs">
+  <Sticker
+    v-if="visible"
+    class="vuepress-toc"
+    v-bind="$attrs"
+  >
     <div
       v-for="(item, index) in $page.headers"
       ref="chairTocItem"
@@ -10,7 +14,10 @@
         { active: activeIndex === index },
       ]"
     >
-      <a :href="`#${item.slug}`" :title="item.title">{{ item.title }}</a>
+      <a
+        :href="`#${item.slug}`"
+        :title="item.title"
+      >{{ item.title }}</a>
     </div>
   </Sticker>
 </template>
@@ -20,7 +27,7 @@ import Sticker from './Sticker.vue'
 let initTop
 
 // get offset top
-function getAbsoluteTop(dom) {
+function getAbsoluteTop (dom) {
   return dom && dom.getBoundingClientRect
     ? dom.getBoundingClientRect().top +
         document.body.scrollTop +
@@ -30,27 +37,27 @@ function getAbsoluteTop(dom) {
 
 export default {
   components: {
-    Sticker,
+    Sticker
   },
 
-  data() {
+  data () {
     return {
-      activeIndex: 0,
+      activeIndex: 0
     }
   },
 
   computed: {
-    visible() {
+    visible () {
       return (
         this.$frontmatter &&
         this.$frontmatter.toc !== false &&
         !!(this.$page && this.$page.headers && this.$page.headers.length)
       )
-    },
+    }
   },
 
   watch: {
-    activeIndex() {
+    activeIndex () {
       const items = this.$refs.chairTocItem || []
       const dom = items[this.activeIndex]
       if (!dom) return
@@ -64,10 +71,10 @@ export default {
       }
     },
 
-    $route() {},
+    $route () {}
   },
 
-  mounted() {
+  mounted () {
     // sync visible to parent component
     const syncVisible = () => {
       this.$emit('visible-change', this.visible)
@@ -90,13 +97,13 @@ export default {
     // window.addEventListener('hashchange', this._onHashChange);
   },
 
-  beforeDestroy() {
+  beforeDestroy () {
     window.removeEventListener('scroll', this._onScroll)
     window.removeEventListener('hashchange', this._onHashChange)
   },
 
   methods: {
-    onScroll() {
+    onScroll () {
       if (initTop === undefined) {
         initTop = getAbsoluteTop(this.$el)
       }
@@ -124,11 +131,11 @@ export default {
       }
     },
 
-    triggerEvt() {
+    triggerEvt () {
       this._onScroll()
       this._onHashChange()
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -144,24 +151,22 @@ export default {
   overflow-y auto
   padding-top 5rem
   top 0
-  right 10px
+  right 2rem
   box-sizing border-box
-  /* background: #fff; */
   z-index 0
 
   .vuepress-toc-item
     position relative
     padding 0.1rem 0.6rem 0.1rem 1.5rem
     line-height 1.5rem
-    border-left 1px solid rgba(0, 0, 0, 0.08)
     overflow hidden
 
     a
       display block
-      color $textColor
+      color $blackLight
       width 100%
       box-sizing border-box
-      font-size 12px
+      font-size 14px
       font-weight 400
       text-decoration none
       transition color 0.3s
@@ -170,8 +175,6 @@ export default {
       white-space nowrap
 
     &.active
-      border-left-color $accentColor
-
       a
         color $accentColor
 

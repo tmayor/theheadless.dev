@@ -1,14 +1,16 @@
 <template>
   <footer class="footer">
     <div class="footer-left-wrap">
-      <ul v-if="contact" class="contact">
+      <ul
+        v-if="contact"
+        class="contact"
+      >
         <li
           v-for="item in contact"
-          :key="item.iconComponent"
+          :key="item.link"
           class="contact-item"
         >
           <NavLink :link="item.link">
-            <component :is="item.iconComponent"></component>
             {{ item.text }}
           </NavLink>
         </li>
@@ -16,9 +18,18 @@
     </div>
 
     <div class="footer-right-wrap">
-      <ul v-if="copyright" class="copyright">
-        <li v-for="item in copyright" :key="item.text" class="copyright-item">
-          <NavLink :link="item.link">{{ item.text }}</NavLink>
+      <ul
+        v-if="copyright"
+        class="copyright"
+      >
+        <li
+          v-for="item in copyright"
+          :key="item.text"
+          class="copyright-item"
+        >
+          <NavLink :link="item.link">
+            {{ item.text }}
+          </NavLink>
         </li>
       </ul>
     </div>
@@ -26,103 +37,28 @@
 </template>
 
 <script>
-import {
-  CodepenIcon,
-  CodesandboxIcon,
-  FacebookIcon,
-  GithubIcon,
-  GitlabIcon,
-  GlobeIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  MailIcon,
-  MessageSquareIcon,
-  MusicIcon,
-  PhoneIcon,
-  TwitterIcon,
-  VideoIcon,
-  YoutubeIcon,
-} from 'vue-feather-icons'
 
 export default {
-  components: {
-    CodepenIcon,
-    CodesandboxIcon,
-    FacebookIcon,
-    GithubIcon,
-    GitlabIcon,
-    GlobeIcon,
-    InstagramIcon,
-    LinkedinIcon,
-    MailIcon,
-    MessageSquareIcon,
-    MusicIcon,
-    PhoneIcon,
-    TwitterIcon,
-    VideoIcon,
-    YoutubeIcon,
-  },
-
   computed: {
-    contact() {
+    contact () {
       return (
         (this.$themeConfig.footer && this.$themeConfig.footer.contact) ||
         []
       )
         .map(({ type, link }) => {
           return {
-            iconComponent: this.getIconComponentName(type),
-            link,
+            link
           }
         })
         .filter(({ iconComponent }) => iconComponent)
     },
 
-    copyright() {
+    copyright () {
       return (
         (this.$themeConfig.footer && this.$themeConfig.footer.copyright) || []
       )
-    },
-  },
-
-  methods: {
-    getIconComponentName(contactType) {
-      switch (contactType) {
-        case 'codepen':
-          return 'CodepenIcon'
-        case 'codesandbox':
-          return 'CodesandboxIcon'
-        case 'facebook':
-          return 'FacebookIcon'
-        case 'github':
-          return 'GithubIcon'
-        case 'gitlab':
-          return 'GitlabIcon'
-        case 'instagram':
-          return 'InstagramIcon'
-        case 'linkedin':
-          return 'LinkedinIcon'
-        case 'mail':
-          return 'MailIcon'
-        case 'messenger':
-          return 'MessageSquareIcon'
-        case 'music':
-          return 'MusicIcon'
-        case 'phone':
-          return 'PhoneIcon'
-        case 'twitter':
-          return 'TwitterIcon'
-        case 'video':
-          return 'VideoIcon'
-        case 'web':
-          return 'GlobeIcon'
-        case 'youtube':
-          return 'YoutubeIcon'
-        default:
-          return ''
-      }
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -133,11 +69,12 @@ ol, ul
   padding 0
 
 .footer
-  min-height 60px
+  min-height $footerHeight
   box-sizing border-box
   background-color $footerBgColor
   display flex
-  padding 15px 32px
+  padding 2rem 2rem
+  flex-shrink: 0;
 
   .footer-left-wrap
     line-height 30px
@@ -186,12 +123,8 @@ ol, ul
 
         a
           font-size 12px
-          color $footerColor
+          color $gray
           text-decoration none
-          transition color 0.3s
-
-          &:hover
-            color rgba(255, 255, 255, 0.9)
 
 @media (max-width: $MQMobile)
   .footer

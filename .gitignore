@@ -1,6 +1,4 @@
 node_modules
 blog/.vuepress/dist
 .idea
-blog/.DS_Store
-blog/snippets/.DS_Store
-blog/snippets/playwright/.DS_Store
+.eslintcache

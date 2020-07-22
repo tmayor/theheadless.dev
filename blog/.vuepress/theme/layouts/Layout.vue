@@ -1,56 +1,80 @@
 <template>
   <div class="list">
-    <div class="ui-posts" itemscope itemtype="http://schema.org/Blog">
+    <div
+      class="ui-posts"
+      itemscope
+      itemtype="http://schema.org/Blog"
+    >
       <article
-          v-for="page in pages"
-          :key="page.key"
-          class="ui-post"
-          itemprop="blogPost"
-          itemscope
-          itemtype="https://schema.org/BlogPosting"
+        v-for="page in pages"
+        :key="page.key"
+        class="ui-post"
+        itemprop="blogPost"
+        itemscope
+        itemtype="https://schema.org/BlogPosting"
       >
-        <meta itemprop="mainEntityOfPage" :content="page.path" />
+        <meta
+          itemprop="mainEntityOfPage"
+          :content="page.path"
+        >
 
-        <header class="ui-post-title" itemprop="name headline">
-          <NavLink :link="page.path">{{ page.title }}</NavLink>
+        <header
+          class="ui-post-title"
+          itemprop="name headline"
+        >
+          <NavLink :link="page.path">
+            {{ page.title }}
+          </NavLink>
         </header>
 
-        <div>
+        <div class="ui-post-meta-wrapper">
           <div
-              v-if="page.frontmatter.author"
-              class="ui-post-meta ui-post-author"
-              itemprop="publisher author"
-              itemtype="http://schema.org/Person"
-              itemscope
+            v-if="page.frontmatter.author"
+            class="ui-post-meta ui-post-author"
+            itemprop="publisher author"
+            itemtype="http://schema.org/Person"
+            itemscope
           >
-            <UserIcon />
+            <img
+              class="ui-post-githubUser"
+              :src="'https://github.com/' + page.frontmatter.githubUser + '.png?size=100'"
+              :alt="page.frontmatter.githubUser"
+              v-if="page.frontmatter.githubUser"
+            >
+            <UserIcon v-else />
             <span itemprop="name">{{ page.frontmatter.author }}</span>
-            <span v-if="page.frontmatter.location" itemprop="address">
+            <span
+              v-if="page.frontmatter.location"
+              itemprop="address"
+            >
               &nbsp; in {{ page.frontmatter.location }}
             </span>
           </div>
 
-          <div v-if="page.frontmatter.date" class="ui-post-meta ui-post-date">
+          <div
+            v-if="page.frontmatter.date"
+            class="ui-post-meta ui-post-date"
+          >
             <ClockIcon />
             <time
-                pubdate
-                itemprop="datePublished"
-                :datetime="page.frontmatter.date"
+              pubdate
+              itemprop="datePublished"
+              :datetime="page.frontmatter.date"
             >
               {{ resolvePostDate(page.frontmatter.date) }}
             </time>
           </div>
 
           <div
-              v-if="page.frontmatter.tags"
-              class="ui-post-meta ui-post-tag"
-              itemprop="keywords"
+            v-if="page.frontmatter.tags"
+            class="ui-post-meta ui-post-tag"
+            itemprop="keywords"
           >
             <TagIcon />
             <router-link
-                v-for="tag in resolvePostTags(page.frontmatter.tags)"
-                :key="tag"
-                :to="'/tag/' + tag"
+              v-for="tag in resolvePostTags(page.frontmatter.tags)"
+              :key="tag"
+              :to="'/tag/' + tag"
             >
               {{ tag }}
             </router-link>
@@ -59,87 +83,74 @@
 
         <!-- eslint-disable vue/no-v-html -->
         <p
-            v-if="page.excerpt"
-            class="ui-post-summary"
-            itemprop="description"
-            v-html="page.excerpt"
+          v-if="page.excerpt"
+          class="ui-post-summary"
+          itemprop="description"
+          v-html="page.excerpt"
         />
         <!-- eslint-enable vue/no-v-html -->
-        <p v-else class="ui-post-summary" itemprop="description">
+        <p
+          v-else
+          class="ui-post-summary"
+          itemprop="description"
+        >
           {{ page.frontmatter.summary || page.summary }}
         </p>
 
-        <NavLink :link="page.path" class="ui-post-continue-link">Continue reading
+        <NavLink
+          :link="page.path"
+          class="ui-post-continue-link"
+        >
+          Continue reading
           <ArrowRightIcon />
         </NavLink>
       </article>
     </div>
 
-    <component
-        :is="paginationComponent"
-        v-if="$pagination.length > 1 && paginationComponent"
-    ></component>
+    <Pagination
+      v-if="$pagination.length > 1"
+    />
   </div>
 </template>
 
 <script>
-  /* global THEME_BLOG_PAGINATION_COMPONENT */
 
-  import Vue from 'vue'
-  import dayjs from 'dayjs'
-  import { UserIcon, ClockIcon, TagIcon, ArrowRightIcon } from 'vue-feather-icons'
-  import {
-    Pagination,
-    SimplePagination,
-  } from '@vuepress/plugin-blog/lib/client/components'
+import dayjs from 'dayjs'
+import { UserIcon, ClockIcon, TagIcon, ArrowRightIcon } from 'vue-feather-icons'
+import {
+  Pagination
+} from '@vuepress/plugin-blog/lib/client/components'
 
-  export default {
-    components: { UserIcon, ClockIcon, TagIcon, ArrowRightIcon },
+export default {
+  components: { UserIcon, ClockIcon, TagIcon, ArrowRightIcon, Pagination },
 
-    props: ['sidebarItems'],
+  props: ['sidebarItems'],
 
-    data() {
-      return {
-        paginationComponent: null,
-      }
+  data () {
+    return {
+      paginationComponent: null
+    }
+  },
+
+  computed: {
+    pages () {
+      return this.$pagination.pages
+    }
+  },
+
+  methods: {
+    resolvePostDate (date) {
+      return dayjs(date).format(
+        this.$themeConfig.dateFormat || 'ddd MMM DD YYYY'
+      )
     },
 
-    computed: {
-      pages() {
-        return this.$pagination.pages
-      },
-    },
-
-    created() {
-      this.paginationComponent = this.getPaginationComponent()
-    },
-
-    methods: {
-      getPaginationComponent() {
-        const n = THEME_BLOG_PAGINATION_COMPONENT
-        if (n === 'Pagination') {
-          return Pagination
-        }
-
-        if (n === 'SimplePagination') {
-          return SimplePagination
-        }
-
-        return Vue.component(n) || Pagination
-      },
-
-      resolvePostDate(date) {
-        return dayjs(date).format(
-          this.$themeConfig.dateFormat || 'ddd MMM DD YYYY'
-        )
-      },
-
-      resolvePostTags(tags) {
-        if (!tags || Array.isArray(tags)) return tags
-        return [tags]
-      },
-    },
+    resolvePostTags (tags) {
+      if (!tags || Array.isArray(tags)) return tags
+      return [tags]
+    }
   }
+}
 </script>
 
 <style lang="stylus">
@@ -194,6 +205,11 @@
       width 16px
       height 16px
 
+  .ui-post-meta-wrapper
+    display flex
+    align-items center
+    flex-wrap wrap
+
   .ui-post-meta
     display inline-flex
     align-items center
@@ -218,6 +234,8 @@
   .ui-post-author
     color $gray
     font-weight 600
+    display flex
+    align-items center
 
   .ui-post-date
     color $gray
@@ -235,4 +253,8 @@
 
       &:hover
         color $accentColor
+  .ui-post-githubUser
+    border-radius 9999px
+    width 25px
+    margin-right .5rem
 </style>

@@ -1,9 +1,16 @@
 <template>
   <aside class="sidebar">
-    <NavLinks/>
-    <slot name="top"/>
-    <SidebarLinks :depth="0" :items="items"/>
-    <slot name="bottom"/>
+    <NavLinks />
+    <slot name="top" />
+    <SidebarLinks
+      :depth="0"
+      :items="items"
+    />
+    <SidebarLinks
+      :depth="0"
+      :items="topics"
+    />
+    <slot name="bottom" />
   </aside>
 </template>
 
@@ -16,7 +23,29 @@ export default {
 
   components: { SidebarLinks, NavLinks },
 
-  props: ['items']
+  props: ['items'],
+
+  computed: {
+    topics () {
+      return [{
+        title: 'Topics',
+        collapsable: false,
+        sidebarDepth: 2,
+        type: 'group',
+        children: Object.keys(this.$tag._metaMap).map(key => {
+          return {
+            path: this.$tag._metaMap[key].path.toLowerCase(),
+            title: key,
+            id: 'post',
+            type: 'page'
+          }
+        })
+          .sort((a, b) => {
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase())
+          })
+      }]
+    }
+  }
 }
 </script>
 
@@ -40,7 +69,7 @@ export default {
       font-size 1.1em
       padding 0.5rem 0 0.5rem 1.5rem
   & > .sidebar-links
-    padding 1.5rem 0
+    padding 1.5rem 0 0 0
     & > li > a.sidebar-link
       font-size 1.1em
       line-height 1.7
